@@ -78,7 +78,8 @@ the HTML is much faster than PDF. Tables will be formated
 <span>  output_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"html"</span>, <span class="st">"pdf"</span>, <span class="st">"docx"</span><span class="op">)</span>,</span>
 <span>  popn_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">verbose</span>,</span>
-<span>  quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  quiet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -136,6 +137,10 @@ environment or external files. Defaults to options()$verbose.</p></dd>
 <dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
 <dd><p>Suppress warning and other messages from quarto,
 see <code><a href="https://quarto-dev.github.io/quarto-r/reference/quarto_render.html" class="external-link">quarto_render</a></code></p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Other parameters passed to <code><a href="https://quarto-dev.github.io/quarto-r/reference/quarto_render.html" class="external-link">quarto_render</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
