@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   analysis-template: analysis-template.html
   using-cttab: using-cttab.html
-last_built: 2025-04-11T16:07Z
+last_built: 2025-04-11T16:54Z
 urls:
   reference: https://cam-ctu.github.io/cctu/reference
   article: https://cam-ctu.github.io/cctu/articles
