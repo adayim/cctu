@@ -129,7 +129,12 @@ options("cctu_output").</p></dd>
 
 <dt id="arg-graphics-args">graphics_args<a class="anchor" aria-label="anchor" href="#arg-graphics-args"></a></dt>
 <dd><p>a list of named arguments to supply to graphics
-function (png, postscript, jpeg)</p></dd>
+function. <a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png</a> for <code>"png"</code>, <a href="https://rdrr.io/r/grDevices/postscript.html" class="external-link">postscript</a>
+for <code>"ps"</code> or <code>"eps"</code>, <a href="https://rdrr.io/r/grDevices/png.html" class="external-link">jpeg</a> for <code>"jpg"</code> and
+<code>"jpeg"</code>, <a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf</a> for <code>"pdf"</code>). If you have the <code>ragg</code>
+package installed, it will use <a href="https://ragg.r-lib.org/reference/agg_png.html" class="external-link">agg_png</a> for <code>"png"</code> and
+<a href="https://ragg.r-lib.org/reference/agg_jpeg.html" class="external-link">agg_jpeg</a> for <code>"jpg"</code> and <code>"jpeg"</code> for better quality.
+The <a href="https://svglite.r-lib.org/reference/svglite.html" class="external-link">svglite</a> is used for <code>"svg"</code> file.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
