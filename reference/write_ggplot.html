@@ -118,13 +118,14 @@ options("cctu_output").</p></dd>
 
 
 <dt id="arg-format">format<a class="anchor" aria-label="anchor" href="#arg-format"></a></dt>
-<dd><p>either <code>"png"</code> (default), <code>"eps"</code>, <code>"ps"</code>,
+<dd><p>either <code>"png"</code>, <code>"eps"</code>, <code>"ps"</code>,
 <code>"pdf"</code>, <code>"svg"</code>, <code>"jpg"</code> or <code>"jpeg"</code> to determine the
  file type to use. You can request multiple file types by providing a vector.
  The <code>"png"</code> format will always be produced and saved under
  <code>directory</code>, typically this is <code>Output/Figures</code>. All other formats
  will be saved under a sub-folder with the format name. See details for more
- information.</p></dd>
+ information. You can set the default figure format by setting
+ <code>options(cctu_fig_format = c("png", "eps"))</code> (default).</p></dd>
 
 
 <dt id="arg-graphics-args">graphics_args<a class="anchor" aria-label="anchor" href="#arg-graphics-args"></a></dt>
