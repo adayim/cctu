@@ -1,4 +1,8 @@
 test_that("produce different flavour of plot", {
+
+
+operating_system <-    Sys.info()["sysname"]
+
   local_edition(3)
   library(survival)
   fit <- survfit(Surv(time, status) ~ rx, data = colon)
