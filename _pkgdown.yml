@@ -125,5 +125,14 @@ reference:
   - remove_blank_rows_cols
   - remove_invalid_utf8
 
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - analysis-template
+  - using-cttab
+  - rmarkdown_report
 
+development:
+  mode: auto
 
