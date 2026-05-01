@@ -28,6 +28,7 @@ data as a categorical one. It is important to understand this, let’s use
 `mtcars` dataset and demonstrate how it works.
 
 ``` r
+
 data(mtcars)
 # Assign variable label
 var_lab(mtcars$am) <- "Transmission"
@@ -46,6 +47,7 @@ variable is numeric. You can still summarize it as numeric variable as
 below:
 
 ``` r
+
 summary(mtcars$am)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #>  0.0000  0.0000  0.0000  0.4062  1.0000  1.0000
@@ -56,6 +58,7 @@ analysis. The `to_factor` function replace the value with labels and
 convert the variable to factor.
 
 ``` r
+
 # Extract variable label
 var_lab(mtcars$am)
 #> [1] "Transmission"
@@ -103,6 +106,7 @@ details. But one thing to remember is that all the names in the variable
 selection will be considered as a variable of the data.
 
 ``` r
+
 vars <- c("mpg", "am")
 # You can do this in the normal data.frame
 mtcars[, vars]
@@ -139,6 +143,7 @@ parameters to be used by `cctab`. Below is setting some of the options,
 for more details please check out the `cctab` function manuals.
 
 ``` r
+
 options(cctu_digits = 3) # keep 3 digits for numerical value
 options(cctu_digits_pct = 0) # keep 0 digits for percentage
 options(cctu_subjid_string = "subjid") # Set subject ID string
@@ -158,6 +163,7 @@ by setting all the columns to character. This will be handled later.
 Same process can be found in the `Analysis Template` vignette.
 
 ``` r
+
 # Read example data
 dt <- read.csv(system.file("extdata", "pilotdata.csv", package = "cctu"), colClasses = "character")
 
@@ -175,6 +181,7 @@ datasets with different variable names except for some key variables,
 you can use `merge_data` function to combine them together.
 
 ``` r
+
 # Read example data
 dt_a <- read.csv(system.file("extdata", "test_A.csv", package = "cctu"),
   colClasses = "character"
@@ -216,6 +223,7 @@ you know what you are doing. This will have an impact on the missing
 report.
 
 ``` r
+
 # Create subjid
 dt$subjid <- substr(dt$USUBJID, 8, 11)
 
@@ -240,6 +248,7 @@ treatment arm. For demonstrating the filtering, we only report non-white
 patients’ BMI.
 
 ``` r
+
 # Attach population
 attach_pop("1.1")
 
@@ -258,6 +267,7 @@ X <- cttab(
 ![](using-cttab_files/figure-html/unnamed-chunk-10-1.png)
 
 ``` r
+
 
 # Write table
 X
@@ -298,6 +308,7 @@ parameters to be used in the formula interface. All the other parameters
 are the same.
 
 ``` r
+
 # No grouping
 X <- cttab(AGE + SEX + BMIBL ~ 1, data = df)
 # Group summarise by ARM
@@ -314,6 +325,7 @@ The `cttab` function will report the missing internally. You can use the
 following to get the missing report.
 
 ``` r
+
 # This will save the missing report under Output folder
 # Or you can set the output folder and name
 dump_missing_report()
@@ -338,6 +350,7 @@ simple tables.
 Table only some variables, no treatment arm or variable selection.
 
 ``` r
+
 X <- cttab(
   x = c("AGE", "SEX", "BMIBL"), # Variable to report
   data = df
@@ -347,6 +360,7 @@ X <- cttab(
 ![](using-cttab_files/figure-html/unnamed-chunk-13-1.png)
 
 ``` r
+
 
 X
 #> ┌───────────────────┬─────────────────┐
@@ -376,6 +390,7 @@ X
 This is what we have seen before
 
 ``` r
+
 X <- cttab(
   x = c("AGE", "SEX", "BMIBL"), # Variable to report
   group = "ARM", # Group variable
@@ -387,6 +402,7 @@ X <- cttab(
 ![](using-cttab_files/figure-html/unnamed-chunk-14-1.png)
 
 ``` r
+
 
 X
 #> ┌───────────────────┬─────────────────┬─────────────────┬─────────────────┐
@@ -420,6 +436,7 @@ You can define `row_split` parameter to the name of visit or repeat
 variable.
 
 ``` r
+
 attach_pop("1.1")
 df <- extract_form(dt, "Lab", vars_keep = c("subjid", "ARM"))
 
@@ -435,6 +452,7 @@ X <- cttab(
 ![](using-cttab_files/figure-html/unnamed-chunk-15-1.png)
 
 ``` r
+
 
 X
 #> ┌───────────────────┬─────────────────┬─────────────────┬─────────────────┐
@@ -528,6 +546,7 @@ This is useful if you want to report patient numbers for different
 condition that belong to one category. Below is how to do it:
 
 ``` r
+
 # Prepare data as before
 attach_pop("1.1")
 df <- extract_form(dt, "PatientReg", vars_keep = c("subjid"))
@@ -565,6 +584,7 @@ X <- cttab(
 ![](using-cttab_files/figure-html/unnamed-chunk-16-1.png)
 
 ``` r
+
 
 X
 #> ┌───────────────────┬─────────────────┬─────────────────┬─────────────────┐
@@ -624,6 +644,7 @@ is used to format the percentage values. There is `format_pval` might be
 useful to you.
 
 ``` r
+
 X <- cttab(
   x = c("AGE", "SEX", "BMIBL"), # Variable to report
   group = "ARM", # Group variable
@@ -637,6 +658,7 @@ X <- cttab(
 ![](using-cttab_files/figure-html/unnamed-chunk-17-1.png)
 
 ``` r
+
 
 X
 #> ┌───────────────────┬─────────────────┬──────────────────┬──────────────────┐

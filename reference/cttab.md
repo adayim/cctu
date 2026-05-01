@@ -195,15 +195,15 @@ nice table. There are three 4 possible values for each rows. Row name
 printed as the first column in the word table. Some styles will be
 applied to each row based on the `position` attributes.
 
-|     |                                                                                                  |
-|-----|--------------------------------------------------------------------------------------------------|
+|  |  |
+|----|----|
 | `0` | indicates the row will be in bold, spanned through all columns and a grey background in the word |
-|     |                                                                                                  |
-| `1` | indicates the row will be in bold                                                                |
-|     |                                                                                                  |
-| `2` | the row will be in bold and spanned through all columns                                          |
-|     |                                                                                                  |
-| `3` | indicates the row of the first column will be indented                                           |
+|  |  |
+| `1` | indicates the row will be in bold |
+|  |  |
+| `2` | the row will be in bold and spanned through all columns |
+|  |  |
+| `3` | indicates the row of the first column will be indented |
 
 ## Methods (by class)
 
@@ -225,6 +225,7 @@ applied to each row based on the `position` attributes.
 ## Examples
 
 ``` r
+
 # Read data
 dt <- read.csv(system.file("extdata", "pilotdata.csv", package="cctu"))
 dlu <- read.csv(system.file("extdata", "pilotdata_dlu.csv", package="cctu"))

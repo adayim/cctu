@@ -56,13 +56,14 @@ A data.table object.
 ## See also
 
 [`tidy_dlu`](https://cam-ctu.github.io/cctu/reference/tidy_dlu.md)
-[`data.table`](https://rdatatable.gitlab.io/data.table/reference/data.table.html)
+[`data.table`](https://rdrr.io/pkg/data.table/man/data.table.html)
 [`read_data`](https://cam-ctu.github.io/cctu/reference/read_data.md)
 [`remove_blank_rows_cols`](https://cam-ctu.github.io/cctu/reference/remove_blank_rows_cols.md)
 
 ## Examples
 
 ``` r
+
 # Read MACRO data
 dt <- read.csv(system.file("extdata", "pilotdata.csv", package="cctu"),
                colClasses = "character")
