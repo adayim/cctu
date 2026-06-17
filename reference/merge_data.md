@@ -69,6 +69,4 @@ clu <- res$clu # Extract combined CLU data
 
 # Apply CLU and DLU files
 dt <- apply_macro_dict(dt, dlu = dlu, clu = clu, clean_names = FALSE)
-#> The conversion of the following variables to dates failed and no action was taken:
-#> DERICDAT_2, BLOODDAT_2
 ```
