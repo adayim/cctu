@@ -14,7 +14,8 @@ write_table(
   clean_up = TRUE,
   directory = file.path(cctu_opt("output"), "Core"),
   verbose = options()$verbose,
-  footnote = NULL
+  footnote = NULL,
+  spanner_sep = NULL
 )
 ```
 
@@ -59,6 +60,17 @@ write_table(
 - footnote:
 
   character vector, can be used to add footnotes.
+
+- spanner_sep:
+
+  `NULL` (default) for a single-row header, byte-for-byte as before. A
+  separator string (e.g. `"_"`) builds a two-level header by splitting
+  each data-column name on its first occurrence of the separator: the
+  text before becomes a group spanner above, the text after the leaf
+  label below. Column 1 is always the row label and is never split.
+  Useful for
+  [`shift_table`](https://cam-ctu.github.io/cctu/reference/shift_table.md)
+  output with `col_groups`, whose columns are named `group_leaf`.
 
 ## Value
 
