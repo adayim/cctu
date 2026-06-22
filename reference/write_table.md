@@ -61,7 +61,7 @@ write_table(
 
   character vector, can be used to add footnotes. Use `@ref{number}`
   anywhere in the text to insert a clickable cross-reference to another
-  table or figure by its number, e.g. `"See @ref\{1.1\} for details"`
+  table or figure by its number, e.g. `"See @ref{1.1} for details"`
   renders as `"See Table 1.1 for details"` with "Table 1.1" linking to
   that table's heading.
 
