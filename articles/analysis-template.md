@@ -567,16 +567,16 @@ sessionInfo()
 #>  [9] cellranger_1.1.0   jsonlite_2.0.0     Matrix_1.7-5       gridExtra_2.3     
 #> [13] httr_1.4.8         purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 
 #> [17] jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0        splines_4.6.0     
-#> [21] xslt_1.5.1         withr_3.0.2        cachem_1.1.0       yaml_2.3.12       
+#> [21] xslt_1.5.1         withr_3.0.3        cachem_1.1.0       yaml_2.3.12       
 #> [25] otel_0.2.0         tools_4.6.0        png_0.1-9          vctrs_0.7.3       
 #> [29] R6_2.6.1           lifecycle_1.0.5    htmlwidgets_1.6.4  ragg_1.5.2        
 #> [33] pkgconfig_2.0.3    pillar_1.11.1      bslib_0.11.0       gtable_0.3.6      
 #> [37] data.table_1.18.4  glue_1.8.1         Rcpp_1.1.1-1.1     systemfonts_1.3.2 
-#> [41] xfun_0.58          tibble_3.3.1       tidyselect_1.2.1   farver_2.1.2      
+#> [41] xfun_0.59          tibble_3.3.1       tidyselect_1.2.1   farver_2.1.2      
 #> [45] htmltools_0.5.9    patchwork_1.3.2    labeling_0.4.3     compiler_4.6.0    
 #> [49] S7_0.2.2
 date()
-#> [1] "Thu Jun 18 12:36:10 2026"
+#> [1] "Mon Jun 22 12:16:09 2026"
 ```
 
 The output is
