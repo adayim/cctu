@@ -133,8 +133,8 @@ data_table_summary(data_table)
 #> 1 dirtydata   dirtydata.csv /home/runner/work/_temp/Library/cctu/extdata
 #> 2      meta meta_table.xlsx /home/runner/work/_temp/Library/cctu/extdata
 #>              mod_time
-#> 1 2026-06-22 12:14:52
-#> 2 2026-06-22 12:14:52
+#> 1 2026-06-22 12:26:56
+#> 2 2026-06-22 12:26:56
 #>                                                 full_file_path
 #> 1   /home/runner/work/_temp/Library/cctu/extdata/dirtydata.csv
 #> 2 /home/runner/work/_temp/Library/cctu/extdata/meta_table.xlsx
