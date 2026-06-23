@@ -72,7 +72,7 @@ column spanners), e.g. PARAM down, ARM across.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">shift_table</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">value</span>,</span>
-<span>  id <span class="op">=</span> <span class="fu"><a href="cctu_opt.html">cctu_opt</a></span><span class="op">(</span><span class="st">"subjid_string"</span><span class="op">)</span>,</span>
+<span>  id_var <span class="op">=</span> <span class="fu"><a href="cctu_opt.html">cctu_opt</a></span><span class="op">(</span><span class="st">"subjid_string"</span><span class="op">)</span>,</span>
 <span>  visit <span class="op">=</span> <span class="st">"AVISIT"</span>,</span>
 <span>  bl_value <span class="op">=</span> <span class="st">"Baseline"</span>,</span>
 <span>  row_groups <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -98,7 +98,7 @@ column spanners), e.g. PARAM down, ARM across.</p>
 <dd><p>ordered-factor column holding the categories (best -&gt; worst).</p></dd>
 
 
-<dt id="arg-id">id<a class="anchor" aria-label="anchor" href="#arg-id"></a></dt>
+<dt id="arg-id-var">id_var<a class="anchor" aria-label="anchor" href="#arg-id-var"></a></dt>
 <dd><p>subject identifier column.</p></dd>
 
 
@@ -195,7 +195,7 @@ blocks may become ragged. "none" (default), "rows", "cols", "both".</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11:     S06 Baseline    AST      B Normal</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 12:     S06   Week 4    AST      B   High</span>
 <span class="r-in"><span><span class="co"># PARAM as bold row-group banners (down), ARM across, baseline rows indented.</span></span></span>
-<span class="r-in"><span><span class="fu">shift_table</span><span class="op">(</span><span class="va">dt</span>, value <span class="op">=</span> <span class="st">"AVALC"</span>, id <span class="op">=</span> <span class="st">"USUBJID"</span>, visit <span class="op">=</span> <span class="st">"AVISIT"</span>,</span></span>
+<span class="r-in"><span><span class="fu">shift_table</span><span class="op">(</span><span class="va">dt</span>, value <span class="op">=</span> <span class="st">"AVALC"</span>, id_var <span class="op">=</span> <span class="st">"USUBJID"</span>, visit <span class="op">=</span> <span class="st">"AVISIT"</span>,</span></span>
 <span class="r-in"><span>            bl_value <span class="op">=</span> <span class="st">"Baseline"</span>, row_groups <span class="op">=</span> <span class="st">"PARAM"</span>, col_groups <span class="op">=</span> <span class="st">"ARM"</span>,</span></span>
 <span class="r-in"><span>            pct <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ┌────────────┬─────┬────────┬──────┬──────────────────┬─────┬────────┬──────┬──────────────────┐</span>

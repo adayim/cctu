@@ -11,9 +11,9 @@ concomitant medications, or anything with a class/term hierarchy.
 ae_summary(
   data,
   adsl,
-  id_var,
-  class_var = NULL,
+  id_var = cctu_opt("subjid_string"),
   term_var,
+  class_var = NULL,
   trt_var = NULL,
   overall = TRUE,
   grade_var = NULL,
@@ -43,15 +43,15 @@ ae_summary(
   Subject ID column name (string). Must exist in both \`data\` and
   \`adsl\`.
 
+- term_var:
+
+  Preferred term column name in \`data\` (string).
+
 - class_var:
 
   Class/SOC column name in \`data\` (string), or \`NULL\`. When
   \`NULL\`, the table is flat: a top "any event" row followed by
   term-level rows, with no class grouping.
-
-- term_var:
-
-  Preferred term column name in \`data\` (string).
 
 - trt_var:
 

@@ -69,9 +69,9 @@ concomitant medications, or anything with a class/term hierarchy.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ae_summary</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">adsl</span>,</span>
-<span>  <span class="va">id_var</span>,</span>
-<span>  class_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  id_var <span class="op">=</span> <span class="fu"><a href="cctu_opt.html">cctu_opt</a></span><span class="op">(</span><span class="st">"subjid_string"</span><span class="op">)</span>,</span>
 <span>  <span class="va">term_var</span>,</span>
+<span>  class_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  trt_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  overall <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grade_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -103,14 +103,14 @@ concomitant medications, or anything with a class/term hierarchy.</p>
 `data` and `adsl`.</p></dd>
 
 
+<dt id="arg-term-var">term_var<a class="anchor" aria-label="anchor" href="#arg-term-var"></a></dt>
+<dd><p>Preferred term column name in `data` (string).</p></dd>
+
+
 <dt id="arg-class-var">class_var<a class="anchor" aria-label="anchor" href="#arg-class-var"></a></dt>
 <dd><p>Class/SOC column name in `data` (string), or `NULL`.
 When `NULL`, the table is flat: a top "any event" row
 followed by term-level rows, with no class grouping.</p></dd>
-
-
-<dt id="arg-term-var">term_var<a class="anchor" aria-label="anchor" href="#arg-term-var"></a></dt>
-<dd><p>Preferred term column name in `data` (string).</p></dd>
 
 
 <dt id="arg-trt-var">trt_var<a class="anchor" aria-label="anchor" href="#arg-trt-var"></a></dt>

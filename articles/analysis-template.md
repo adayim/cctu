@@ -556,7 +556,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#>  [1] survival_3.8-6 xml2_1.5.2     rvest_1.0.5    tidyr_1.3.2    rmarkdown_2.31
+#>  [1] survival_3.8-6 xml2_1.6.0     rvest_1.0.5    tidyr_1.3.2    rmarkdown_2.31
 #>  [6] readxl_1.5.0   magrittr_2.0.5 knitr_1.51     ggplot2_4.0.3  dplyr_1.2.1   
 #> [11] cctu_0.8.13   
 #> 
@@ -575,7 +575,7 @@ sessionInfo()
 #> [45] htmltools_0.5.9    patchwork_1.3.2    labeling_0.4.3     compiler_4.6.0    
 #> [49] S7_0.2.2
 date()
-#> [1] "Mon Jun 22 12:33:47 2026"
+#> [1] "Tue Jun 23 07:46:21 2026"
 ```
 
 The output is

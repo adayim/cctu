@@ -13,7 +13,7 @@ across.
 shift_table(
   data,
   value,
-  id = cctu_opt("subjid_string"),
+  id_var = cctu_opt("subjid_string"),
   visit = "AVISIT",
   bl_value = "Baseline",
   row_groups = NULL,
@@ -37,7 +37,7 @@ shift_table(
 
   ordered-factor column holding the categories (best -\> worst).
 
-- id:
+- id_var:
 
   subject identifier column.
 
@@ -137,7 +137,7 @@ dt[, AVALC := factor(AVALC, levels = c("Low", "Normal", "High"),
 #> 11:     S06 Baseline    AST      B Normal
 #> 12:     S06   Week 4    AST      B   High
 # PARAM as bold row-group banners (down), ARM across, baseline rows indented.
-shift_table(dt, value = "AVALC", id = "USUBJID", visit = "AVISIT",
+shift_table(dt, value = "AVALC", id_var = "USUBJID", visit = "AVISIT",
             bl_value = "Baseline", row_groups = "PARAM", col_groups = "ARM",
             pct = "none")
 #> ┌────────────┬─────┬────────┬──────┬──────────────────┬─────┬────────┬──────┬──────────────────┐
