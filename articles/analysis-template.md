@@ -525,7 +525,7 @@ Sys.info()
 #>                                               version 
 #> "#18~24.04.1-Ubuntu SMP Thu May 28 16:39:11 UTC 2026" 
 #>                                              nodename 
-#>                                       "runnervm7b5n9" 
+#>                                       "runnervmmklqx" 
 #>                                               machine 
 #>                                              "x86_64" 
 #>                                                 login 
@@ -563,7 +563,7 @@ sessionInfo()
 #> loaded via a namespace (and not attached):
 #>  [1] sass_0.4.10        generics_0.1.4     lattice_0.22-9     digest_0.6.39     
 #>  [5] evaluate_1.0.5     grid_4.6.1         RColorBrewer_1.1-3 fastmap_1.2.0     
-#>  [9] cellranger_1.1.0   jsonlite_2.0.0     Matrix_1.7-5       gridExtra_2.3     
+#>  [9] cellranger_1.1.0   jsonlite_2.0.0     Matrix_1.7-5       gridExtra_2.3.1   
 #> [13] httr_1.4.8         purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 
 #> [17] jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0        splines_4.6.1     
 #> [21] xslt_1.5.1         withr_3.0.3        cachem_1.1.0       yaml_2.3.12       
@@ -575,7 +575,7 @@ sessionInfo()
 #> [45] htmltools_0.5.9    patchwork_1.3.2    labeling_0.4.3     compiler_4.6.1    
 #> [49] S7_0.2.2
 date()
-#> [1] "Thu Jun 25 00:33:51 2026"
+#> [1] "Fri Jun 26 16:51:26 2026"
 ```
 
 The output is
