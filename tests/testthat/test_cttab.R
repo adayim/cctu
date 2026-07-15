@@ -41,13 +41,13 @@ test_that("Start from data reading", {
   )
 
   X <- cttab(
-    x = c("AGE", "SEX", "BMIBL"),
+    x = c("AGE", "RACEN", "SEX", "BMIBL"),
     group = "ARM",
     data = df,
     select = c("BMIBL" = "RACEN != 1")
   )
 
-  X1 <- cttab(AGE + SEX + BMIBL ~ ARM,
+  X1 <- cttab(AGE + RACEN + SEX + BMIBL ~ ARM,
     data = df,
     select = c("BMIBL" = "RACEN != 1")
   )
@@ -57,7 +57,7 @@ test_that("Start from data reading", {
   testthat_print(X)
 
   mis_rp <- get_missing_report()
-  expect_identical(mis_rp$subject_id, "1275")
+  expect_identical(mis_rp$subject_id[1], "1275")
   reset_missing_report()
   expect_equal(nrow(get_missing_report()), 0)
 
@@ -99,15 +99,16 @@ test_that("Variable groups", {
   df$BMIBL[df$RACEN == 6] <- NA
 
   X <- cttab(
-    x = list(c("AGE", "SEX", "BMIBL"),
-      "Blood" = c("ALT", "AST"),
+    x = list(c("AGE", "RACEN", "SEX", "BMIBL"),
+      "Blood" = c("PERF", "ALT", "AST"),
       "Patients with Abnormal" = c("ABNORMAST", "ABNORMALT")
     ),
     group = "ARM",
     data = df,
     select = c(
       "BMIBL" = "RACEN != 1",
-      "ALT" = "PERF == 1"
+      "ALT" = "PERF == 1",
+      "ABNORMALT" = "PERF == 1"
     )
   )
 
