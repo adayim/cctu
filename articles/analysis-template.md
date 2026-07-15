@@ -521,11 +521,11 @@ Sys.info()
 #>                                               sysname 
 #>                                               "Linux" 
 #>                                               release 
-#>                                   "6.17.0-1018-azure" 
+#>                                   "6.17.0-1020-azure" 
 #>                                               version 
-#> "#18~24.04.1-Ubuntu SMP Thu May 28 16:39:11 UTC 2026" 
+#> "#20~24.04.1-Ubuntu SMP Fri Jun 19 20:09:14 UTC 2026" 
 #>                                              nodename 
-#>                                       "runnervmmklqx" 
+#>                                       "runnervm3jd5f" 
 #>                                               machine 
 #>                                              "x86_64" 
 #>                                                 login 
@@ -558,24 +558,24 @@ sessionInfo()
 #> other attached packages:
 #>  [1] survival_3.8-6 xml2_1.6.0     rvest_1.0.5    tidyr_1.3.2    rmarkdown_2.31
 #>  [6] readxl_1.5.0   magrittr_2.0.5 knitr_1.51     ggplot2_4.0.3  dplyr_1.2.1   
-#> [11] cctu_0.8.14   
+#> [11] cctu_0.8.15   
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] sass_0.4.10        generics_0.1.4     lattice_0.22-9     digest_0.6.39     
 #>  [5] evaluate_1.0.5     grid_4.6.1         RColorBrewer_1.1-3 fastmap_1.2.0     
 #>  [9] cellranger_1.1.0   jsonlite_2.0.0     Matrix_1.7-5       gridExtra_2.3.1   
 #> [13] httr_1.4.8         purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 
-#> [17] jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0        splines_4.6.1     
+#> [17] jquerylib_0.1.4    cli_3.6.6          rlang_1.3.0        splines_4.6.1     
 #> [21] xslt_1.5.1         withr_3.0.3        cachem_1.1.0       yaml_2.3.12       
 #> [25] otel_0.2.0         tools_4.6.1        png_0.1-9          vctrs_0.7.3       
 #> [29] R6_2.6.1           lifecycle_1.0.5    htmlwidgets_1.6.4  ragg_1.5.2        
 #> [33] pkgconfig_2.0.3    pillar_1.11.1      bslib_0.11.0       gtable_0.3.6      
-#> [37] data.table_1.18.4  glue_1.8.1         Rcpp_1.1.1-1.1     systemfonts_1.3.2 
-#> [41] xfun_0.59          tibble_3.3.1       tidyselect_1.2.1   farver_2.1.2      
+#> [37] data.table_1.18.4  glue_1.8.1         Rcpp_1.1.2         systemfonts_1.3.2 
+#> [41] xfun_0.60          tibble_3.3.1       tidyselect_1.2.1   farver_2.1.2      
 #> [45] htmltools_0.5.9    patchwork_1.3.2    labeling_0.4.3     compiler_4.6.1    
 #> [49] S7_0.2.2
 date()
-#> [1] "Fri Jun 26 16:51:26 2026"
+#> [1] "Wed Jul 15 13:35:35 2026"
 ```
 
 The output is
