@@ -305,12 +305,16 @@ stat_tab <- function(vars,
   }
   cttab_factorise(data, c(group, row_split), drop_levels = TRUE)
 
-  cols_toconvert <- vapply(data, function(z) has_labels(z) || is.character(z),
-                           logical(1L))
-  cols_toconvert <- intersect(names(cols_toconvert)[cols_toconvert], flat_vars)
-  if (length(cols_toconvert) > 0) {
-    data[, (cols_toconvert) := lapply(.SD, to_factor, ordered = TRUE),
-         .SDcols = cols_toconvert]
+  # Categorical analysis vars (value-labelled or character) are rendered as
+  # ordered factors. We do NOT convert them in place to allow filtering.
+  cat_vars <- intersect(
+    names(which(vapply(data, function(z) has_labels(z) || is.character(z),
+                       logical(1L)))),
+    flat_vars
+  )
+  fac_alias <- setNames(sprintf(".cttab_fac_%s", cat_vars), cat_vars)
+  for (v in cat_vars) {
+    set(data, j = fac_alias[[v]], value = to_factor(data[[v]], ordered = TRUE))
   }
 
   # Normalize variable groupings (Group_ID + Group_Label) when vars is a list
@@ -345,14 +349,21 @@ stat_tab <- function(vars,
     for (i in seq_along(flat_vars)) {
       col <- flat_vars[i]
 
-      if (!inherits(data[[col]], c("numeric", "integer", "factor",
-                                   "character", "logical"))) {
+      # Categorical vars render from their aliased factor copy; numeric/logical
+      # vars render from the original column. The `select` filter, however,
+      # always evaluates against the original columns in `.SD`.
+      render_col <- if (col %in% cat_vars) fac_alias[[col]] else col
+      render_vec <- data[[render_col]]
+
+      if (!inherits(render_vec, c("numeric", "integer", "factor",
+                                  "character", "logical"))) {
         stop(paste("The class of variable", col, "is",
                    class(data[[col]]), "and not supported!"))
       }
 
-      # Apply per-variable filter from `select`
-      val <- .SD[[col]][cttab_eval_select(.SD, col, select)]
+      # Apply per-variable filter from `select` (mask from the original column,
+      # values from the render column).
+      val <- .SD[[render_col]][cttab_eval_select(.SD, col, select)]
 
       lbl <- cttab_get_label(data[[col]], col)
 
@@ -367,7 +378,7 @@ stat_tab <- function(vars,
 
       stats <- NULL
 
-      if (inherits(data[[col]], c("numeric", "integer"))) {
+      if (inherits(render_vec, c("numeric", "integer"))) {
         stats <- render_numeric(
           val,
           what        = render_num,
@@ -375,12 +386,12 @@ stat_tab <- function(vars,
           digits_pct  = digits_pct,
           rounding_fn = rounding_fn
         )
-      } else if (inherits(data[[col]], c("factor", "character"))) {
+      } else if (inherits(render_vec, c("factor", "character"))) {
         stats <- render_cat(val, digits_pct = digits_pct)
-      } else if (inherits(data[[col]], "logical")) {
+      } else if (inherits(render_vec, "logical")) {
         # All-NA logical loses its categorical meaning; fall through to the
         # numeric render path so the user still sees Valid Obs. + Missing.
-        if (all(is.na(data[[col]]))) {
+        if (all(is.na(render_vec))) {
           stats <- render_numeric(
             val,
             what        = render_num,
