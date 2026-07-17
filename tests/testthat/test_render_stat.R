@@ -92,25 +92,39 @@ test_that("a statistic name nested in a longer one is not substituted inside it"
   expect_identical(r("N (MEAN)"), "32 (20.1)")
 })
 
-test_that("unavailable statistics render '-', and an all-unavailable template renders ''", {
+test_that("an undefined statistic shows NA only inside a composite; alone it is blank", {
   # sd() of one observation is NA. The hard-coded row guarded MEAN but not SD
   # and printed a literal "5.00 (NA)", while what = "Mean (SD)" rendered ""
-  # for the very same input - the two paths disagreed.
+  # for the very same input - the two paths disagreed. Both now read
+  # "5.00 (NA)". "NA" (not "-") avoids being misread as a negative sign.
   one <- render_numeric(5)
-  expect_identical(one[["Mean (SD)"]], "5.00 (-)")
+  expect_identical(one[["Mean (SD)"]], "5.00 (NA)")
   expect_identical(render_numeric(5, what = "Mean (SD)")[["Mean (SD)"]],
-                   "5.00 (-)")
+                   "5.00 (NA)")
 
-  # Nothing available at all -> blank cell, not "- [-, -]".
+  # "NA" appears only next to a value that WAS computed. A statistic that is
+  # undefined on its own renders "" -- the SAME as when there is no data at
+  # all -- so a given stat looks consistent regardless of WHY it is missing.
+  # (SD of n=1, CV of a zero mean, GMean of non-positive data.)
+  expect_identical(render_numeric(5, what = "SD")[["SD"]], "")
+  expect_identical(render_numeric(rep(NA_real_, 3), what = "SD")[["SD"]], "")
+  expect_identical(render_numeric(c(0, 0, 0), what = "CV")[["CV"]], "")
+  expect_identical(render_numeric(c(-1, 2, 3), what = "GMean")[["GMean"]], "")
+
+  # Nothing available at all (no data) -> blank cell, not "NA [NA, NA]".
   allna <- render_numeric(rep(NA_real_, 3))
   expect_identical(allna[["Mean (SD)"]], "")
   expect_identical(allna[["Median [Min, Max]"]], "")
   expect_identical(allna[["Valid Obs."]], "0")
 
-  # Partially available -> the available parts still show.
+  # Composite with at least one value computed -> show it, NA the rest.
   expect_identical(
     render_numeric(c(1, 2, NA), what = "Median [Min, Max]")[["Median [Min, Max]"]],
     "1.50 [1.00, 2.00]"
+  )
+  expect_identical(
+    render_numeric(c(-1, 2, 3), what = "GMean (Mean)")[["GMean (Mean)"]],
+    "NA (1.33)"
   )
 })
 
@@ -123,44 +137,39 @@ test_that("Inf is a real value and survives rendering", {
 
 test_that("CV is unavailable when the mean is zero", {
   # sd/0 is Inf and 0/0 is NaN; these reached the table as "Inf%" and "NaN".
+  # Mean of each dataset is exactly 0, which renders "0" (not "0.00").
   expect_identical(
     render_numeric(c(-5, 5, -3, 3), what = "Mean (CV)")[["Mean (CV)"]],
-    "0.00 (-)"
+    "0 (NA)"
   )
   expect_identical(
     render_numeric(c(0, 0, 0), what = "Mean (CV)")[["Mean (CV)"]],
-    "0.00 (-)"
+    "0 (NA)"
   )
   # A non-zero mean still reports CV.
   expect_match(render_numeric(c(1, 2, 3), what = "CV")[["CV"]], "%$")
 })
 
-test_that("an explicit NA factor level counts as a category, not as missingness", {
-  # Promoting NA to a level (exclude = NULL / addNA) declares missingness to BE
-  # a category: is.na() on such a vector is all FALSE, so there is nothing left
-  # to exclude from the denominator. It is relabelled "Missing" for display but
-  # must still be counted, or the percentages sum past 100% and N < Nall while
-  # nothing is actually missing.
+test_that("render_cat mirrors base table() and never invents a 'Missing' level", {
+  # The ordinary factor: missing VALUES are dropped from the rows and from the
+  # PCTnoNA denominator, exactly like table(useNA = "no"). Missingness itself is
+  # reported separately by stat_tab, not by cat_stat.
+  g <- factor(c("a", "a", "b", NA, NA), levels = c("a", "b"))
+  expect_identical(names(render_cat(g)), names(table(g, useNA = "no")))
+  expect_identical(render_cat(g), c("a" = "2/3 (66.7%)", "b" = "1/3 (33.3%)"))
+  expect_identical(cat_stat(g)$a$N, 3L)
+
+  # A zero-count level is kept (table() keeps it); render_cat shows it blank.
+  h <- factor(c("a", "a", "b"), levels = c("a", "b", "c"))
+  expect_identical(names(render_cat(h)), names(table(h, useNA = "no")))
+  expect_identical(unname(render_cat(h)[["c"]]), "")
+
+  # An explicit NA *level* (factor(exclude = NULL)) is not a shape users are
+  # expected to create, but if it occurs render_cat still just mirrors table():
+  # the NA level is counted like any category and is NOT relabelled to
+  # "Missing" (which would collide with the genuine Missing row stat_tab adds).
   f <- factor(c("a", "a", "b", NA, NA), levels = c("a", "b", NA),
               exclude = NULL)
-  expect_identical(sum(is.na(f)), 0L)
-
-  expect_identical(
-    render_cat(f),
-    c("a" = "2/5 (40.0%)", "b" = "1/5 (20.0%)", "Missing" = "2/5 (40.0%)")
-  )
-  expect_identical(cat_stat(f)$a$N, 5L)
-  expect_identical(cat_stat(f)$a$Nall, 5L)
-
-  # A level whose LABEL is the string "NA" is an ordinary category: it is
-  # neither relabelled to "Missing" nor treated as missing. (Only a real NA
-  # level satisfies is.na(levels(.)); the string "NA" does not.)
-  s <- factor(c("a", "a", "b", "NA", "NA"))
-  expect_true("NA" %in% names(render_cat(s)))
-  expect_false("Missing" %in% names(render_cat(s)))
-  expect_identical(render_cat(s)[["NA"]], "2/5 (40.0%)")
-
-  # Genuinely missing values (no NA level) are excluded from PCTnoNA as before.
-  g <- factor(c("a", "a", "b", NA, NA), levels = c("a", "b"))
-  expect_identical(render_cat(g), c("a" = "2/3 (66.7%)", "b" = "1/3 (33.3%)"))
+  expect_identical(names(render_cat(f)), names(table(f, useNA = "no")))
+  expect_false("Missing" %in% names(render_cat(f)))
 })

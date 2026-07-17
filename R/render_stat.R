@@ -62,16 +62,16 @@ render_numeric <- function(x, what = "Median [Min, Max]", ...) {
     names(what)[what_name == ""] <- what[what_name == ""]
   }
 
-  # Replace the values. An unavailable statistic renders "-"; a template in
-  # which nothing at all was available renders "" (so all-missing data gives a
-  # blank cell, not "- [-, -]").
+  # Render each template, substituting "NA" for any statistic that could not be
+  # computed. "NA" only appears next to a value that WAS computed; a cell where
+  # nothing is computable is left blank instead ("NA" alone is not informative).
   cust_stat <- sapply(what, function(i) {
     stat_vals <- gsub("\\s", "", unlist(strsplit(i, "[^a-zA-Z0-9]")))
     stat_vals <- stat_vals[stat_vals != ""]
     any_avail <- FALSE
     for (j in stat_vals) {
       v <- res[[toupper(j)]]
-      if (avail(v)) any_avail <- TRUE else v <- "-"
+      if (avail(v)) any_avail <- TRUE else v <- "NA"
       # \\b anchors the match to a whole word. Unanchored, a short statistic
       # name is substituted INSIDE a longer one containing it -- "Mean
       # (GMean)" became "25.0 (G25.0)". Names are alphanumeric (the strsplit
@@ -81,13 +81,14 @@ render_numeric <- function(x, what = "Median [Min, Max]", ...) {
     if (any_avail) i else ""
   })
 
-  # Mirror the same rule for the hard-coded row, which previously guarded MEAN
-  # but not SD and so printed a literal "5.00 (NA)" for a single observation --
-  # while `what = "Mean (SD)"` rendered "" for that same input.
+  # Same rule for the hard-coded row, which previously guarded MEAN but not SD
+  # and so printed a literal "5.00 (NA)" for a single observation from ONE code
+  # path while `what = "Mean (SD)"` rendered "" -- the two disagreed. Both now
+  # read "5.00 (NA)" when the mean is present and SD is undefined.
   mean_sd <- if (!avail(res$MEAN)) {
     ""
   } else if (!avail(res$SD)) {
-    sprintf("%s (-)", res$MEAN)
+    sprintf("%s (NA)", res$MEAN)
   } else {
     sprintf("%s (%s)", res$MEAN, res$SD)
   }
@@ -293,18 +294,6 @@ cat_stat <- function(x, digits_pct = 1) {
   }
 
   y <- table(x, useNA = "no")
-
-  # `useNA = "no"` drops NA *values* but keeps an explicit NA *level* (a factor
-  # built with exclude = NULL / addNA), which is relabelled "Missing" below and
-  # counted like any other category. That is deliberate: promoting NA to a
-  # level declares missingness to BE a category, and `is.na()` on such a vector
-  # is all FALSE -- there is no missingness left to exclude. Counting it would
-  # make the displayed percentages sum past 100% and leave N < Nall with zero
-  # missing values. (Note this tests for a real NA level, not a level whose
-  # label happens to be the string "NA".)
-  nn <- names(y)
-  nn[is.na(nn)] <- "Missing"
-  names(y) <- nn
   lapply(y, function(z) {
     list(
       FREQ = z,

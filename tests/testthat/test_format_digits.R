@@ -101,14 +101,23 @@ test_that("round_pad rounds negative numbers away from zero", {
   expect_identical(round_pad(c(1.5, NA), digits = 2), c("1.50", NA))
 })
 
-test_that("signif_pad pads zero like any other value", {
-  # formatC(0, format = "fg", flag = "#") returns a bare "0" while every other
-  # value is padded to `digits` significant figures, giving ragged decimals.
+test_that("round_pad renders an exact zero as \"0\", distinct from a rounded-down value", {
+  # "0.00" is ambiguous under round_pad: a small value rounds to it too. An
+  # exact zero is "0"; a genuinely small value keeps the padded "0.00".
+  expect_identical(round_pad(0, digits = 2), "0")
+  expect_identical(round_pad(0.001, digits = 2), "0.00")
+  expect_identical(round_pad(c(0, 1.5, 0.001), digits = 2),
+                   c("0", "1.50", "0.00"))
+  expect_identical(round_pad(c(0, NA), digits = 2), c("0", NA))
+})
+
+test_that("signif_pad leaves an exact zero as \"0\"", {
+  # An exact 0 is rendered "0", not padded to "0.00": padding would read as a
+  # small value that rounded down to zero, whereas "0" is unambiguously exact.
   expect_identical(signif_pad(c(5, 0, 0.5), digits = 3),
-                   c("5.00", "0.00", "0.500"))
-  expect_identical(signif_pad(0, digits = 2), "0.0")
+                   c("5.00", "0", "0.500"))
+  expect_identical(signif_pad(0, digits = 3), "0")
   expect_identical(signif_pad(0, digits = 1), "0")
-  expect_identical(signif_pad(c(0, -1.5), digits = 3), c("0.00", "-1.50"))
 })
 
 test_that("format_percent round-trips a zero-length input", {

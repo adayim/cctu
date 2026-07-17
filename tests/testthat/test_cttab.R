@@ -685,18 +685,34 @@ test_that("a select filter referencing the grouping variable is rejected", {
   )
 })
 
-test_that("a select filter cannot silently resolve to a workspace object", {
-  # Without enclos = baseenv(), eval() fell through to the caller's workspace:
-  # a filter naming a non-existent column picked up a same-named global and
-  # returned a length-1 TRUE that recycled, dropping the filter with no warning.
-  d <- data.table::data.table(age = c(10, 20, 30, 40))
-  nosuch <- "A"  # nolint: object_usage_linter. Deliberate shadow for the test.
+test_that("select filters see the data and base functions, never the workspace", {
+  # A filter is data-driven and must not depend on hidden session state. It is
+  # evaluated with `enclos = baseenv()`, so column names and base functions
+  # resolve but a name that is neither -- e.g. a same-named global -- does not.
+  # This keeps a report reproducible from its data alone.
+  d <- data.table::data.table(
+    age = c(10, 20, 30, 40),
+    grp = c("apple", "ant", "bee", "cat")
+  )
 
+  # Base operators and functions work.
+  expect_identical(which(cttab_eval_select(d, "age", c(age = "age > 25"))),
+                   c(3L, 4L))
+  expect_identical(
+    which(cttab_eval_select(d, "age", c(age = "grepl('^a', grp)"))),
+    c(1L, 2L)
+  )
+
+  # A global object of the same name as a non-existent column must NOT be
+  # picked up: the filter fails cleanly (warn + keep all) rather than silently
+  # matching the workspace value.
+  assign(".cttab_shadow", c(TRUE, FALSE, TRUE, FALSE), envir = globalenv())
+  on.exit(rm(".cttab_shadow", envir = globalenv()), add = TRUE)
   expect_warning(
-    keep <- cttab_eval_select(d, "age", c(age = "nosuch == 'A'")),
+    keep <- cttab_eval_select(d, "age", c(age = ".cttab_shadow")),
     "Filter failed"
   )
-  expect_identical(keep, rep(TRUE, 4))
+  expect_identical(keep, rep(TRUE, 4L))
 })
 
 test_that("an all-missing categorical still reports its missingness", {

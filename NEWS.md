@@ -9,15 +9,15 @@ Correctness review of `cttab()` and the statistics it renders. Each of the bugs 
 
 * A `group` level named `"Total"` is now an error, as it collides with the generated Total column. Rename the level or pass `total = FALSE`.
 
-* Statistics that cannot be computed now render `-` (previously `NA` or blank), and `signif_pad(0)` is padded to `"0.00"` (previously `"0"`).
-
 * `select` filters now evaluate against the original values rather than value-label text. A filter such as `c(BMIBL = "RACEN != 1")` was silently ignored when `RACEN` was also being summarised, because it had been converted to a factor first.
+
+* `select` filters are evaluated against the data columns and base functions only; they no longer see the user's workspace.
 
 * `round_pad()` now rounds negative numbers away from zero. `round_pad(-0.135, 2)` returned `-0.13` instead of `-0.14`, systematically biasing signed values (e.g. change from baseline) toward zero.
 
 * `render_numeric()` no longer substitutes a statistic name inside a longer one that contains it — `"Mean (GMean)"` rendered as `"25.0 (G25.0)"`.
 
-* Statistics that cannot be computed now render `-` consistently. With a single observation, `Mean (SD)` gave `"5.00 (NA)"` from one code path and `""` from another; both now give `"5.00 (-)"`.
+* A statistic that cannot be computed renders `NA` when it sits beside one that could (e.g. `Mean (SD)` for a single observation reads `"5.00 (NA)"`), and blank when nothing in the cell could be computed. Previously the two rendering paths disagreed — `"5.00 (NA)"` from one, `""` from the other — for the same input.
 
 * `CV` is reported as unavailable when the mean is zero, instead of `"Inf%"` or `"NaN"`.
 
@@ -26,8 +26,6 @@ Correctness review of `cttab()` and the statistics it renders. Each of the bugs 
 * A categorical variable that is entirely missing now reports `Missing` instead of disappearing from the table.
 
 * `cttab_plot()` evaluates all `select` filters before applying any, so the plot agrees with the table and no longer depends on the order of the names in `select`.
-
-* A `select` filter naming a column that does not exist no longer silently resolves to a same-named object in the user's workspace.
 
 * `group_data()` no longer returns a `data.table` carrying a stale key describing the input's row order.
 

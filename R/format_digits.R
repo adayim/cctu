@@ -89,16 +89,9 @@ signif_pad <- function(x,
 
   cx[is.na(x)] <- "0" # Put in a dummy value for missing x
   cx <- gsub("[^0-9]*$", "", cx) # Remove any trailing non-digit characters
-
-  # formatC(0, format = "fg", flag = "#") returns a bare "0" where every other
-  # value is padded to `digits` significant figures (5 -> "5.00"), which leaves
-  # ragged decimals down a column. Pad zero to match: `digits` significant
-  # figures of a leading non-zero digit is `digits - 1` decimal places.
-  z_pos <- which(x == 0)
-  if (length(z_pos) > 0) {
-    cx[z_pos] <- formatC(0, digits = max(digits - 1L, 0L), format = "f")
-  }
-
+  # An exact zero is deliberately left as "0", not padded to "0.00": padding
+  # would read as "a small value that rounded down to zero" (e.g. 0.0001),
+  # whereas "0" is unambiguously exact.
   cx[c_pos] <- x[c_pos] # Restore non-numbers
 
   return(cx)
@@ -136,6 +129,10 @@ round_pad <- function(x,
       args[names(args) %in% names(formals(formatC))]
     )
   )
+  # An exact zero renders "0", not "0.00". This also disambiguates it from a
+  # genuinely small value that rounds down: round_pad(0.001, 2) is "0.00",
+  # round_pad(0, 2) is "0". `which()` drops NA positions from the index.
+  cx[which(x == 0)] <- "0"
   ifelse(is.na(x), NA, cx)
 }
 
