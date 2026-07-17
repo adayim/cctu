@@ -38,6 +38,12 @@ render_numeric <- function(x, what = "Median [Min, Max]", ...) {
   # Get statistics
   res <- num_stat(x, ...)
 
+  # Is a statistic available? `num_stat` returns NA (or NaN) for statistics it
+  # could not compute -- e.g. SD of a single observation, or CV of data whose
+  # mean is zero. Inf/-Inf are genuine values and must survive: `signif_pad`
+  # deliberately preserves them. Test the value, never the rendered string.
+  avail <- function(v) length(v) == 1L && !is.na(v)
+
   # Check if the statistics are supported
   stat_vals <- gsub("\\s", "", unlist(strsplit(what, "[^a-zA-Z0-9]")))
   stat_vals <- stat_vals[stat_vals != ""]
@@ -56,25 +62,39 @@ render_numeric <- function(x, what = "Median [Min, Max]", ...) {
     names(what)[what_name == ""] <- what[what_name == ""]
   }
 
-  # Replace the values
+  # Replace the values. An unavailable statistic renders "-"; a template in
+  # which nothing at all was available renders "" (so all-missing data gives a
+  # blank cell, not "- [-, -]").
   cust_stat <- sapply(what, function(i) {
     stat_vals <- gsub("\\s", "", unlist(strsplit(i, "[^a-zA-Z0-9]")))
     stat_vals <- stat_vals[stat_vals != ""]
+    any_avail <- FALSE
     for (j in stat_vals) {
-      i <- gsub(j, res[[toupper(j)]], i)
+      v <- res[[toupper(j)]]
+      if (avail(v)) any_avail <- TRUE else v <- "-"
+      # \\b anchors the match to a whole word. Unanchored, a short statistic
+      # name is substituted INSIDE a longer one containing it -- "Mean
+      # (GMean)" became "25.0 (G25.0)". Names are alphanumeric (the strsplit
+      # above splits on [^a-zA-Z0-9]), so they carry no regex metacharacters.
+      i <- gsub(paste0("\\b", j, "\\b"), v, i)
     }
-    # return blank if there's no value at all
-    if (!any(grepl("[[:digit:]]", i))) {
-      i <- ""
-    }
-    i
+    if (any_avail) i else ""
   })
+
+  # Mirror the same rule for the hard-coded row, which previously guarded MEAN
+  # but not SD and so printed a literal "5.00 (NA)" for a single observation --
+  # while `what = "Mean (SD)"` rendered "" for that same input.
+  mean_sd <- if (!avail(res$MEAN)) {
+    ""
+  } else if (!avail(res$SD)) {
+    sprintf("%s (-)", res$MEAN)
+  } else {
+    sprintf("%s (%s)", res$MEAN, res$SD)
+  }
 
   c(
     "Valid Obs." = sprintf("%s", res$N),
-    "Mean (SD)" = ifelse(is.na(res$MEAN), "",
-      sprintf("%s (%s)", res$MEAN, res$SD)
-    ),
+    "Mean (SD)" = mean_sd,
     cust_stat
   )
 }
@@ -123,7 +143,8 @@ render_cat <- function(x, ...) {
 #' Values of type \code{factor}, \code{character} and \code{logical} are
 #' treated as categorical. For logicals, the two categories are given the
 #' labels `Yes` for \code{TRUE}, and `No` for \code{FALSE}.  Factor levels with
-#' zero counts are retained.
+#' zero counts are retained here, but note that \code{\link{render_cat}}
+#' renders a zero count as an empty cell rather than \code{"0"}.
 #'
 #' @param x A vector or numeric, factor, character or logical values.
 #' @param digits_pct An integer specifying the number of significant digits to
@@ -151,11 +172,9 @@ render_cat <- function(x, ...) {
 #'   \item \code{GSD}: the geometric standard deviation of the non-missing
 #'    values if non-negative, or \code{NA}
 #'   \item \code{Q1}: the first quartile of the non-missing values
-#'   (alias \code{q25})
 #'   \item \code{Q2}: the second quartile of the non-missing values
-#'   (alias \code{q50} or \code{Median})
+#'   (same as \code{MEDIAN})
 #'   \item \code{Q3}: the third quartile of the non-missing values
-#'    (alias \code{q75})
 #'   \item \code{IQR}: the inter-quartile range of the non-missing
 #'   values (i.e., \code{Q3 - Q1})
 #' }
@@ -215,7 +234,14 @@ num_stat <- function(x, digits = 3, digits_pct = 1, rounding_fn = signif_pad) {
       SUM = sum(x, na.rm = TRUE),
       MEAN = mean(x, na.rm = TRUE),
       SD = sd(x, na.rm = TRUE),
-      CV = sd(x, na.rm = TRUE) / abs(mean(x, na.rm = TRUE)),
+      # CV is scale-relative and undefined for a zero mean: sd/0 gives Inf and
+      # 0/0 gives NaN, which rendered as "Inf%" / "NaN" in the table. Mark it
+      # unavailable, as GMEAN/GCV/GSD already are for non-positive data.
+      CV = if (isTRUE(mean(x, na.rm = TRUE) == 0)) {
+        NA
+      } else {
+        sd(x, na.rm = TRUE) / abs(mean(x, na.rm = TRUE))
+      },
       GMEAN = if (any(na.omit(x) <= 0)) {
         NA
       } else {
@@ -267,6 +293,15 @@ cat_stat <- function(x, digits_pct = 1) {
   }
 
   y <- table(x, useNA = "no")
+
+  # `useNA = "no"` drops NA *values* but keeps an explicit NA *level* (a factor
+  # built with exclude = NULL / addNA), which is relabelled "Missing" below and
+  # counted like any other category. That is deliberate: promoting NA to a
+  # level declares missingness to BE a category, and `is.na()` on such a vector
+  # is all FALSE -- there is no missingness left to exclude. Counting it would
+  # make the displayed percentages sum past 100% and leave N < Nall with zero
+  # missing values. (Note this tests for a real NA level, not a level whose
+  # label happens to be the string "NA".)
   nn <- names(y)
   nn[is.na(nn)] <- "Missing"
   names(y) <- nn

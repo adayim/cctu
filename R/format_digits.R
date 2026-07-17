@@ -89,6 +89,16 @@ signif_pad <- function(x,
 
   cx[is.na(x)] <- "0" # Put in a dummy value for missing x
   cx <- gsub("[^0-9]*$", "", cx) # Remove any trailing non-digit characters
+
+  # formatC(0, format = "fg", flag = "#") returns a bare "0" where every other
+  # value is padded to `digits` significant figures (5 -> "5.00"), which leaves
+  # ragged decimals down a column. Pad zero to match: `digits` significant
+  # figures of a leading non-zero digit is `digits - 1` decimal places.
+  z_pos <- which(x == 0)
+  if (length(z_pos) > 0) {
+    cx[z_pos] <- formatC(0, digits = max(digits - 1L, 0L), format = "f")
+  }
+
   cx[c_pos] <- x[c_pos] # Restore non-numbers
 
   return(cx)
@@ -102,8 +112,12 @@ round_pad <- function(x,
                       ...) {
   args <- list(...)
 
+  # The nudge must go AWAY from zero, as it does in signif_pad() (which scales
+  # by `x`). A bare positive constant pulls negative values TOWARDS zero, so
+  # round_pad(-0.135, 2) gave "-0.13" where even base round() gives -0.14 --
+  # silently biasing signed values (e.g. change-from-baseline) toward zero.
   eps <- if (round5up) {
-    10^(-(digits + 3))
+    sign(x) * 10^(-(digits + 3))
   } else {
     0
   }
@@ -137,6 +151,13 @@ round_pad <- function(x,
 format_percent <- function(x, digits = 1, ...) {
   if (!is.numeric(x)) {
     stop("x must be numeric.")
+  }
+
+  # A zero-length input must round-trip as zero-length. Without this the
+  # `out[!is_empty(x)] <- res` branch below extends a length-0 `out` to
+  # length 1 and returns NA.
+  if (length(x) == 0L) {
+    return(character(0))
   }
 
   res <- sapply(x[!is_empty(x)], function(v) {

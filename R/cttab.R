@@ -158,6 +158,16 @@ cttab.default <- function(x,
     stop("The variable list, group or row split variable have duplicated variable.")
   }
 
+  # A grouping variable is only ever valid as `group` / `row_split`, never as
+  # an input elsewhere -- the check above already enforces that for `x`. It has
+  # to hold for `select` too: filtering a variable by the group is meaningless
+  # (arm A's column filtered to arm A, arm B's to nothing), and it used to be
+  # silently WRONG rather than refused. `.SD` excludes the `by` columns, so the
+  # per-group cells could not see `group` and went unfiltered while the Total
+  # chunk -- which is not grouped -- did filter, making Total equal to a single
+  # arm instead of the whole population.
+  cttab_check_select_vars(select, c(group, row_split))
+
   # Drop rows with NA in group / row_split before fanning out to stat_tab,
   # cttab_plot, and report_missing so all three see the same population.
   data <- cttab_drop_na_grouping(data, c(group, row_split))
@@ -298,8 +308,14 @@ stat_tab <- function(vars,
     )
   }
 
-  # Defensive NA-grouping drop for direct callers; cttab.default already
-  # does this (with a message) before invoking stat_tab.
+  # Defensive checks for direct callers; cttab.default already performs both
+  # (the NA drop with a message) before invoking stat_tab. The select/grouping
+  # check is repeated here rather than only upstream because this is where the
+  # damage happens -- `.SD` excludes the `by` columns, so a filter naming the
+  # group silently went unapplied per group while the ungrouped Total chunk
+  # did apply it.
+  cttab_check_select_vars(select, c(group, row_split))
+
   for (g in c(group, row_split)) {
     data <- data[!is.na(data[[g]]), env = list(g = I(g))]
   }
@@ -412,9 +428,18 @@ stat_tab <- function(vars,
         }
       }
 
-      if (is.null(stats) || length(stats) == 0L) next
-
+      # Append `miss` BEFORE deciding whether there is anything to report. A
+      # categorical with no renderable categories still has to report its
+      # missingness: `to_factor()` builds levels from the observed values, so
+      # an all-NA / all-blank character yields a 0-level factor and render_cat
+      # returns nothing. Testing `stats` first dropped such a variable from the
+      # table entirely, leaving the reader unable to tell "not requested" from
+      # "100% missing" -- and a labelled-numeric in the same state reported
+      # Missing correctly, so the two disagreed on identical data.
+      if (length(stats) == 0L) stats <- NULL  # keep c() from returning a list
       stats <- c(stats, miss)
+
+      if (length(stats) == 0L) next
 
       rows_list[[length(rows_list) + 1L]] <- data.table(
         Group_ID    = var_group_id[i],
@@ -433,6 +458,18 @@ stat_tab <- function(vars,
 
   include_obs <- isTRUE(add_obs) && !is.null(group)
   by_cols <- c(group, row_split)  # NULLs drop out
+
+  # The synthetic Total column is written into the group column as the literal
+  # string "Total", so a real group level of that name is indistinguishable
+  # from it. Left alone this surfaced as a bare "factor level [3] is
+  # duplicated" from the level rebuild below; had that not errored first, the
+  # cast key would have collided and rendered row counts instead of statistics.
+  if (total && !is.null(group) &&
+        "Total" %in% as.character(unique(data[[group]]))) {
+    stop("The grouping variable '", group, "' has a level named 'Total', ",
+         "which collides with the generated Total column. Rename the level, ",
+         "or pass total = FALSE.")
+  }
 
   # Single grouped tabulation; the by argument copes with NULL group/row_split.
   long_res <- if (length(by_cols)) {
